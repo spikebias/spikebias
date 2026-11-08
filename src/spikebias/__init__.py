@@ -1,7 +1,7 @@
 """spikebias: spike sorting biases of dense extracellular recordings (e.g. Neuropixels), measured against
 the ground truth of a large-scale detailed biophysical model of the cortex."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from . import datasets
 from .accuracy import DELTA_TIME, WELL_SORTED, agreement_scores, best_matches, count_well_sorted, sorting_accuracy

@@ -21,6 +21,8 @@ import numpy as np
 import pandas as pd
 
 DANDISET_ID = "001250"
+# published version of the dandiset (https://doi.org/10.48324/dandi.001250/0.261108.1908); "draft" for the latest uploads
+DANDISET_VERSION = "0.261108.1908"
 API_URL = "https://api.dandiarchive.org/api"
 
 # session names of the sorters in the dandiset
@@ -91,7 +93,7 @@ def asset_path(name: str, sorter: str = None, minutes: int = 10, session: str = 
     return f"{subject}/{subject}_ses-{session}.nwb"
 
 
-def list_assets(name: str = None, version: str = "draft") -> pd.DataFrame:
+def list_assets(name: str = None, version: str = DANDISET_VERSION) -> pd.DataFrame:
     """Files of the dandiset (of one dataset if name is given), with their size in GB."""
     rows, url = [], f"{API_URL}/dandisets/{DANDISET_ID}/versions/{version}/assets/?page_size=500"
     while url:
@@ -104,7 +106,7 @@ def list_assets(name: str = None, version: str = "draft") -> pd.DataFrame:
     return df
 
 
-def asset_url(path: str, version: str = "draft") -> str:
+def asset_url(path: str, version: str = DANDISET_VERSION) -> str:
     """Direct (S3) URL of a file of the dandiset."""
     page = _get(f"{API_URL}/dandisets/{DANDISET_ID}/versions/{version}/assets/?path={path}")
     match = [a for a in page["results"] if a["path"] == path]
@@ -115,7 +117,7 @@ def asset_url(path: str, version: str = "draft") -> str:
     return urls[0] if urls else metadata["contentUrl"][0]
 
 
-def download(path: str, folder: str = "spikebias_data", version: str = "draft") -> str:
+def download(path: str, folder: str = "spikebias_data", version: str = DANDISET_VERSION) -> str:
     """Download a file of the dandiset (e.g. asset_path("npx_spont")) and return its local path."""
     local = os.path.join(folder, path)
     if not os.path.exists(local):
@@ -167,7 +169,7 @@ def _site_coordinates(source: dict) -> np.ndarray:
     return xyz[rows]
 
 
-def load_recording(name: str, local_folder: str = None, version: str = "draft"):
+def load_recording(name: str, local_folder: str = None, version: str = DANDISET_VERSION):
     """RecordingExtractor of a dataset (traces in uV), streamed unless local_folder is given.
 
     The 3D site coordinates, in the frame of the neurons' x, y, z, are set as the rel_x, rel_y and
@@ -184,7 +186,7 @@ def load_recording(name: str, local_folder: str = None, version: str = "draft"):
     return recording
 
 
-def load_ground_truth(name: str, local_folder: str = None, version: str = "draft"):
+def load_ground_truth(name: str, local_folder: str = None, version: str = DANDISET_VERSION):
     """SortingExtractor of the ground truth neurons of a dataset, with their properties."""
     from spikeinterface.extractors import read_nwb_sorting
 
@@ -199,7 +201,7 @@ def load_ground_truth(name: str, local_folder: str = None, version: str = "draft
 
 
 def load_sorting(name: str, sorter: str = "ks4", minutes: int = 10, session: str = None,
-                 local_folder: str = None, version: str = "draft"):
+                 local_folder: str = None, version: str = DANDISET_VERSION):
     """SortingExtractor of a spike sorter on a dataset (the first 10 minutes by default).
 
     Args:
@@ -208,7 +210,7 @@ def load_sorting(name: str, sorter: str = "ks4", minutes: int = 10, session: str
         minutes: 10 for the first 10 minutes, None for the full recording (when available)
         session: session name instead of sorter and minutes, e.g. "ks4-v100-10m" or "tc"
         local_folder: download the file to this folder instead of streaming it
-        version: dandiset version
+        version: dandiset version (default: the published version DANDISET_VERSION)
     """
     from spikeinterface.extractors import read_nwb_sorting
 

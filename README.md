@@ -87,7 +87,8 @@ datasets (`local_folder`); the Neuropixels recordings are about 100 GB.
 
 ## Datasets
 
-`datasets.DATASETS` lists the datasets of dandiset 001250, and `datasets.list_assets(name)` their files.
+`datasets.DATASETS` lists the datasets of dandiset 001250, and `datasets.list_assets(name)` their files. All functions read the
+published version 0.261108.1908 (`datasets.DANDISET_VERSION`) unless you pass `version="draft"`.
 
 | Name | Content |
 |---|---|
@@ -106,7 +107,8 @@ If you use `spikebias` or the dataset, please cite:
 
 - Laquitaine S, Imbeni M, Tharayil J, Isbister JB, Reimann MW. Spike sorting biases and information loss in
   a detailed cortical model. bioRxiv (2024). https://doi.org/10.1101/2024.12.04.626805
-- The dataset: DANDI Archive, dandiset 001250. https://dandiarchive.org/dandiset/001250
+- The dataset: Laquitaine S, Imbeni M, Tharayil J, Isbister J, Reimann M. Spike sorting biases and information loss in a
+  detailed cortical model (Version 0.261108.1908) [Data set]. DANDI Archive (2026). https://doi.org/10.48324/dandi.001250/0.261108.1908
 
 The code that reproduces the paper's figures is at https://github.com/spikebias/spikebias-paper.
 For the curation of sorted single-units, see [spikecurate](https://pypi.org/project/spikecurate/).
