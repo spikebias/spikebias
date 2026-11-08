@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spikebias"
+version = "0.1.0"
+description = "Spike sorting biases of dense extracellular recordings (e.g. Neuropixels), measured against a detailed biophysical model of the cortex"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+authors = [{ name = "Steeve Laquitaine", email = "laquitainesteeve@gmail.com" }]
+keywords = ["spike sorting", "Neuropixels", "ground truth", "biophysical model", "cortex", "SpikeInterface"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "spikeinterface>=0.101",
+    "numpy",
+    "pandas",
+    "scipy",
+    "statsmodels>=0.13",
+    "numba",
+    "h5py",
+    "remfile",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://spikebias.github.io"
+Source = "https://github.com/spikebias/spikebias"
+Paper = "https://doi.org/10.1101/2024.12.04.626805"
+Dataset = "https://dandiarchive.org/dandiset/001250"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+spikebias = ["data/*.csv.gz"]
+
+[tool.pytest.ini_options]
+markers = ["network: reads dandiset 001250 over the internet (run with SPIKEBIAS_NETWORK=1)"]
