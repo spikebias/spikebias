@@ -4,7 +4,8 @@ A binomial generalised linear model (logit link) of the accuracy, fitted by coor
 (statsmodels' elastic net, L1 weight 1, penalty alpha) and refitted for one iteration from these weights
 to get standard errors. Continuous features are replaced by their percentile rank among the training
 neurons (transform="rank") or kept (transform="zscore"); all features are then z-scored with the
-training statistics. Performance is McFadden's pseudo R-squared on held-out neurons.
+training statistics. Performance is McFadden's pseudo R-squared on held-out neurons, from the Bernoulli
+quasi-log-likelihood of the fractional accuracies.
 """
 
 import random
@@ -17,10 +18,12 @@ import statsmodels.api as sm
 CONTINUOUS = ["firing_rate", "distance", "snr", "spatial_extent", "exc_mini_frequency", "dynamics_holding_current"]
 
 
-def binomial_loglike(y, mu) -> float:
-    """Log-likelihood of accuracies y under predicted accuracies mu (statsmodels' binomial family)."""
+def bernoulli_loglike(y, mu) -> float:
+    """Quasi-log-likelihood of accuracies y (between 0 and 1) under predicted accuracies mu:
+    sum of y log(mu) + (1 - y) log(1 - mu)."""
+    y = np.asarray(y, dtype=float)
     mu = np.clip(np.asarray(mu, dtype=float), 1e-12, 1 - 1e-12)
-    return float(sm.families.Binomial().loglike(np.asarray(y, dtype=float), mu, scale=1.0))
+    return float(np.sum(y * np.log(mu) + (1 - y) * np.log(1 - mu)))
 
 
 class AccuracyModel:
@@ -82,8 +85,8 @@ class AccuracyModel:
 
     def score(self, X: pd.DataFrame, y) -> float:
         """McFadden pseudo R-squared: 1 - LL(model) / LL(null), the null predicting the mean training accuracy."""
-        ll = binomial_loglike(y, self.predict(X))
-        ll_null = binomial_loglike(y, np.full(len(y), self.null_accuracy_))
+        ll = bernoulli_loglike(y, self.predict(X))
+        ll_null = bernoulli_loglike(y, np.full(len(y), self.null_accuracy_))
         if ll_null == 0:
             return np.nan
         return 1 - ll / ll_null
